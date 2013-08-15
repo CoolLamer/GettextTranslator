@@ -22,7 +22,7 @@ class Gettext extends Nette\Object implements Nette\Localization\ITranslator
 	protected $lang;
 
 	/** @var array */
-	protected $dictionary = array();
+	private $dictionary = array();
 
 	/** @var array */
 	private $metadata = array();
@@ -312,8 +312,11 @@ class Gettext extends Nette\Object implements Nette\Localization\ITranslator
 		$path = "$dir/$this->lang.$file";
 
 		$metadata = $this->fileManager->generateMetadata($file, $this->metadata);
-		$this->fileManager->buildMOFile("$path.mo", $file, $metadata);
-		$this->fileManager->buildPOFile("$path.po", $file, $metadata);
+		$newStrings = isset($this->sessionStorage->newStrings[$this->lang]) ? $this->sessionStorage->newStrings[$this->lang] : array();
+
+		$this->fileManager->buildMOFile("$path.mo", $file, $metadata, $this->dictionary);
+		$this->fileManager->buildPOFile("$path.po", $file, $metadata, $this->dictionary, $newStrings);
+		die;
 
 		if (isset($this->sessionStorage->newStrings[$this->lang])) {
 			unset($this->sessionStorage->newStrings[$this->lang]);
